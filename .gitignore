@@ -1,0 +1,11 @@
+# Ignore data files
+*.csv
+data/
+
+# Ignore environment files
+.env
+venv/
+
+# Ignore OS files
+.DS_store
+Thumbs.db
