@@ -69,8 +69,7 @@ for movie in movies:
     if link:
         links.append(link)
 
-# Deduplicate
-links = list(set(links))
+links = list(set(links)) # Ensure only unique links
 
 print(f"Total movie links: {len(links)}")
 
@@ -80,14 +79,14 @@ print(f"Total movie links: {len(links)}")
 data = []
 
 for i, link in enumerate(links):
-    print(f"Scraping movie {i}/{len(links)}")
+    print(f"Scraping movie {i}/{len(links)}") # print which movie its scraping
     try:
     # Open the movie detail page
         driver.get(link)
     except Exception as e:
         print(f"Failed to load {link}: {e}")
         continue  # skip to next movie
-    time.sleep(3)
+    time.sleep(2)
 
     # Parse page HTML with BeautifulSoup
     soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -168,5 +167,5 @@ driver.quit()
 # SAVE RESULTS TO CSV
 # -----------------------------
 df = pd.DataFrame(data)
-df.to_csv("movies.csv", index=False)
+df.to_csv("data.csv", index=False)
 print(df.head())
