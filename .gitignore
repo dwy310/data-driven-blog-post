@@ -9,3 +9,6 @@ venv/
 # Ignore OS files
 .DS_store
 Thumbs.db
+
+# Ignore vscode settings files
+.vscode/
