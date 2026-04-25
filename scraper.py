@@ -167,5 +167,5 @@ driver.quit()
 # SAVE RESULTS TO CSV
 # -----------------------------
 df = pd.DataFrame(data)
-df.to_csv("data.csv", index=False)
+df.to_csv("movies.csv", index=False)
 print(df.head())

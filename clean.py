@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+import ast
 
 # 1. Load CSV
 df = pd.read_csv("movies.csv")
@@ -53,10 +54,12 @@ df["Duration"] = df["Duration"].apply(duration_to_minutes)
 df["IMDb Rating"] = df["IMDb Rating"].astype(str).str.extract(r"(\d+\.\d+)").astype(float)
 
 # 7. Expand variables into list
-df["Genres"] = df["Genres"].str.split(", ")
-df["Cast"] = df["Cast"].str.split(", ")
-df["Director"] = df["Director"].str.split(", ")
-df["Providers"] = df["Providers"].str.split(", ")
+df["Genres"] = df["Genres"].apply(ast.literal_eval)
+df["Cast"] = df["Cast"].apply(ast.literal_eval)
+df["Director"] = df["Director"].apply(ast.literal_eval)
+df["Providers"] = df["Providers"].apply(ast.literal_eval)
+
+
 
 # 8. Split IMDb Rating into:
 # Extract review count text e.g. "143k"
@@ -70,4 +73,6 @@ df.drop(columns=["Review Count Raw"], inplace=True)
 
 # 9. Save clean data into CSV
 df.to_csv("movies_clean.csv", index=False)
+
+print(df.dtypes)
 
