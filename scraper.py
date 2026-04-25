@@ -73,99 +73,96 @@ links = list(set(links)) # Ensure only unique links
 
 print(f"Total movie links: {len(links)}")
 
+
 # -----------------------------
 # SCRAPE EACH MOVIE PAGE
 # -----------------------------
+batch_size = 20
 data = []
 
-for i, link in enumerate(links):
-    print(f"Scraping movie {i}/{len(links)}") # print which movie its scraping
-    try:
-    # Open the movie detail page
-        driver.get(link)
-    except Exception as e:
-        print(f"Failed to load {link}: {e}")
-        continue  # skip to next movie
-    time.sleep(2)
+for start in range(0, len(links), batch_size):
+    end = start + batch_size
+    batch_links = links[start:end]
 
-    # Parse page HTML with BeautifulSoup
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    print(f"\n🔹 Processing batch {start//batch_size + 1} ({len(batch_links)} movies)")
 
-    # Extract movie title
-    try:
-        title = soup.find('h1').get_text(strip=True)
-    except:
-        title = 'N/A'
+    for i, link in enumerate(batch_links, start=start):
+        print(f"  → Scraping movie {i+1}/{len(links)}")
 
-    # Extract release year
-    try:
-        year = soup.find("span", class_="release-year").get_text(strip=True)
-    except:
-        year = 'N/A'
+        try:
+            driver.get(link)
+            time.sleep(2)
+        except Exception as e:
+            print(f"Failed to load {link}: {e}")
+            continue
 
-    # Extract IMDB rating
-    try:
-        imdb = soup.find("span", class_="imdb-score").get_text(strip=True)
-    except:
-        imdb = "N/A"
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-    # Extract duration
-    try:
-        details = soup.find_all("div", class_="title-detail-hero-details__item")
-        duration = next((d.text.strip() for d in details if "min" in d.text), "N/A")
-    except:
-        duration = "N/A"
+        # --- your extraction code stays EXACTLY the same ---
+        try:
+            title = soup.find('h1').get_text(strip=True)
+        except:
+            title = 'N/A'
 
-    # Extract genres
-    try:
-        for div in soup.find_all("div", class_="poster-detail-infos__value"):
-            span = div.find("span")
-            if span:
-                text = span.get_text(strip=True)
+        try:
+            year = soup.find("span", class_="release-year").get_text(strip=True)
+        except:
+            year = 'N/A'
 
-                if "," in text and not any(char.isdigit() for char in text):
-                    genres = text
-                    break
-    except:
-        genres = "N/A"
+        try:
+            imdb = soup.find("span", class_="imdb-score").get_text(strip=True)
+        except:
+            imdb = "N/A"
 
-    # Extract cast
-    try:
-        actors = soup.find_all("div", class_="title-credits__actor")
-        cast = ", ".join(actor.find('span', class_='title-credit-name').get_text(strip=True) for actor in actors if actor.find('span', class_='title-credit-name'))
-    except:
-        cast = "N/A"
+        try:
+            details = soup.find_all("div", class_="title-detail-hero-details__item")
+            duration = next((d.text.strip() for d in details if "min" in d.text), "N/A")
+        except:
+            duration = "N/A"
 
-    # Extract director
-    try:
-        directors = soup.find_all("div", class_="poster-detail-infos")
-        director = ", ".join(director.find('span', class_='title-credit-name').get_text(strip=True) for director in directors if director.find('span', class_='title-credit-name'))
-    except:
-        director = "N/A"
+        try:
+            for div in soup.find_all("div", class_="poster-detail-infos__value"):
+                span = div.find("span")
+                if span:
+                    text = span.get_text(strip=True)
+                    if "," in text and not any(char.isdigit() for char in text):
+                        genres = text
+                        break
+        except:
+            genres = "N/A"
 
-    # Extract providers
-    try:
-        providers = [p.get("alt") for p in soup.select("img.provider-icon")]
-        providers = ", ".join(providers)
-    except:
-        providers = "N/A"
+        try:
+            actors = soup.find_all("div", class_="title-credits__actor")
+            cast = ", ".join(actor.find('span', class_='title-credit-name').get_text(strip=True)
+                             for actor in actors if actor.find('span', class_='title-credit-name'))
+        except:
+            cast = "N/A"
 
-    data.append({
-        "Title": title,
-        "Year": year,
-        "IMDb Rating": imdb,
-        "Duration": duration,
-        "Genres": genres,
-        "Cast": cast,
-        "Director": director,
-        "Providers": providers
-    })
+        try:
+            directors = soup.find_all("div", class_="poster-detail-infos")
+            director = ", ".join(d.find('span', class_='title-credit-name').get_text(strip=True)
+                                 for d in directors if d.find('span', class_='title-credit-name'))
+        except:
+            director = "N/A"
 
-driver.quit()
+        try:
+            providers = [p.get("alt") for p in soup.select("img.provider-icon")]
+            providers = ", ".join(providers)
+        except:
+            providers = "N/A"
 
-# -----------------------------
-# SAVE RESULTS TO CSV
-# -----------------------------
-df = pd.DataFrame(data)
-df.to_csv("movies.csv", index=False)
-print(df.head())
+        data.append({
+            "Title": title,
+            "Year": year,
+            "IMDb Rating": imdb,
+            "Duration": duration,
+            "Genres": genres,
+            "Cast": cast,
+            "Director": director,
+            "Providers": providers
+        })
+
+    # SAVE AFTER EACH BATCH
+    df = pd.DataFrame(data)
+    df.to_csv("movies.csv", index=False)
+    print(f"Saved batch {start//batch_size + 1} to movies.csv")
