@@ -6,6 +6,13 @@ import ast
 # 1. Load CSV
 df = pd.read_csv("movies.csv")
  
+# Remove rows where Year, IMDb Rating, and Duration are all "N/A"
+df = df[~(
+    df["Year"].isna() &
+    df["IMDb Rating"].isna() &
+    df["Duration"].isna()
+)]
+
 # 2. Check % of missing values in each column
 def check_missing_values(column):
     nan_percentage = df[column].isnull().sum() / df[column].size
@@ -54,11 +61,10 @@ df["Duration"] = df["Duration"].apply(duration_to_minutes)
 df["IMDb Rating"] = df["IMDb Rating"].astype(str).str.extract(r"(\d+\.\d+)").astype(float)
 
 # 7. Expand variables into list
-df["Genres"] = df["Genres"].apply(ast.literal_eval)
-df["Cast"] = df["Cast"].apply(ast.literal_eval)
-df["Director"] = df["Director"].apply(ast.literal_eval)
-df["Providers"] = df["Providers"].apply(ast.literal_eval)
-
+df["Genres"] = df["Genres"].str.split(", ")
+df["Cast"] = df["Cast"].str.split(", ")
+df["Director"] = df["Director"].str.split(", ")
+df["Providers"] = df["Providers"].str.split(", ")
 
 
 # 8. Split IMDb Rating into:

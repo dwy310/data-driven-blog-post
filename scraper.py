@@ -21,7 +21,7 @@ driver = webdriver.Chrome(options=chrome_options)
 # -----------------------------
 
 # Open JustWatch movies page
-driver.get('https://www.justwatch.com/us/movies')
+driver.get('https://www.justwatch.com/us/movies?release_year_from=2000')
 time.sleep(5)
 
 # -----------------------------
@@ -68,8 +68,6 @@ for movie in movies:
     link = movie.get_attribute('href')
     if link:
         links.append(link)
-
-links = list(set(links)) # Ensure only unique links
 
 print(f"Total movie links: {len(links)}")
 
