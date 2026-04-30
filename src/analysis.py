@@ -10,7 +10,8 @@ from collections import Counter
 # Rating Analysis
 #----------------------
 # 1. Load data
-df = pd.read_csv("movies_clean.csv")
+url = "https://raw.githubusercontent.com/dwy310/data-driven-blog-post/main/data/movies_clean.csv"
+df = pd.read_csv(url)
 
 df["Cast"] = df["Cast"].apply(ast.literal_eval)
 df["Director"] = df["Director"].apply(ast.literal_eval)
@@ -275,6 +276,8 @@ plt.show()
 # Providers Analysis
 #----------------------
 # 1. Providers by number of movies
+provider_df = df.explode("Providers")
+
 provider_counts = (
     provider_df["Providers"]
     .value_counts()
@@ -289,5 +292,3 @@ plt.title("Top 20 Providers by Number of Movies")
 plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
-
-
