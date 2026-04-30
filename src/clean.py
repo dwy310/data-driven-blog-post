@@ -1,11 +1,16 @@
 import pandas as pd
 import numpy as np
 import re
+import os
 import ast
 
 # 1. Load CSV
-df = pd.read_csv("movies.csv")
- 
+# Folder where clean.py lives
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Build absolute path to movies.csv
+df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies.csv")))
+
 # Remove rows where Year, IMDb Rating, and Duration are all "N/A"
 df = df[~(
     df["Year"].isna() &
@@ -77,8 +82,11 @@ df["IMDb Rating"] = df["IMDb Rating"].astype(str).str.extract(r"(\d+\.\d+)").ast
 # Drop the temporary column
 df.drop(columns=["Review Count Raw"], inplace=True)
 
-# 9. Save clean data into CSV
-df.to_csv("movies_clean.csv", index=False)
+# 9. Save clean data into CSV in data folder
+df.to_csv(
+    os.path.abspath(os.path.join(BASE_DIR, "..", "data-driven-blog-post", "data", "movies_clean.csv")),
+    index=False
+)
 
 print(df.dtypes)
 
