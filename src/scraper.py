@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
+import os
 import time
 
 # -----------------------------
@@ -162,5 +163,5 @@ for start in range(0, len(links), batch_size):
 
     # SAVE AFTER EACH BATCH
     df = pd.DataFrame(data)
-    df.to_csv("movies.csv", index=False)
+    df.to_csv(os.path.join("data", "movies.csv"), index=False)
     print(f"Saved batch {start//batch_size + 1} to movies.csv")
