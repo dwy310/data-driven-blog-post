@@ -38,25 +38,24 @@ python -m pip install requests beautifulsoup4 pandas selenium Seaborn
 ## Usage
 
 1. **Clone the Repository**: Clone the repository from GitHub to your local machine.
-   
    ```bash
    git clone https://github.com/dwy310/data-driven-blog-post.git
    ```
 
 
 2. **Run scrape.py script**: Run this script to webscrape JustWatch using Python (Make sure you are inside the folder)
-  ```bash
+   ```bash
    python scrape.py
    ```
 
 
 3. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
-  ```bash
+   ```bash
    python clean.py
    ```
 
 
 4. **Run analysis.py script**: Run this script to produce figures and conduct analysis (Make sure you are inside the folder)
-  ```bash
+   ```bash
    python analysis.py
    ```
