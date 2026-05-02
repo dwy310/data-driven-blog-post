@@ -60,15 +60,15 @@ python -m pip install requests beautifulsoup4 pandas selenium seaborn
    ```
 
 ## Project Directory
-```bash
+```
 ├── README.md               <- Top‑level project overview, instructions, and documentation
 │
 ├── data
-│   ├── movies.csv                 <- Original scraped movie metadata (CSV)             
-│   └── movies_cleaned.csv         <- Final cleaned dataset used for analysis and visualisation
+│   ├── movies.csv          <- Original scraped movie metadata (CSV)             
+│   └── movies_cleaned.csv  <- Final cleaned dataset used for analysis and visualisation
 │
-├── src                     <- Source code for the project
-│   ├── scrape.py           <- Script to scrape movie metadata from JustWatch
-│   ├── clean.py            <- Script to clean, parse, and structure the dataset
-│   ├── analysis.py         <- Script to run analysis and generate figures   
+└── src                     <- Source code for the project
+    ├── scrape.py           <- Script to scrape movie metadata from JustWatch
+    ├── clean.py            <- Script to clean, parse, and structure the dataset
+    └── analysis.py         <- Script to run analysis and generate figures   
 ```
