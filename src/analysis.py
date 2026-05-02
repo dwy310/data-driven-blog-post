@@ -3,24 +3,27 @@ import ast
 import matplotlib.pyplot as plt
 import seaborn as sns
 import networkx as nx
+import numpy as np
+import os
 from itertools import product
-from collections import Counter
+from collections import defaultdict, Counter
 
-#----------------------
-# Rating Analysis
-#----------------------
-# 1. Load data
-url = "https://raw.githubusercontent.com/dwy310/data-driven-blog-post/main/data/movies_clean.csv"
-df = pd.read_csv(url)
+# Folder where analysis.py lives
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Build absolute path to movies.csv
+df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies_clean.csv")))
+
+# Data Preparation
 df["Cast"] = df["Cast"].apply(ast.literal_eval)
 df["Director"] = df["Director"].apply(ast.literal_eval)
 df["Providers"] = df["Providers"].apply(ast.literal_eval)
-
-# 2. Highest‑rated genres
-# Parse Genres from string representation of list → actual Python list
 df["Genres"] = df["Genres"].apply(lambda x: ast.literal_eval(x))
 
+#----------------------
+# EDA 
+#----------------------
+# Highest‑rated genres
 genre_df = df.explode("Genres")
 
 genre_ratings = (
@@ -44,40 +47,7 @@ plt.title("Highest‑Rated Genres")
 plt.tight_layout()
 plt.show()
 
-
-# 3. Rating distribution
-plt.figure(figsize=(8, 5))
-sns.histplot(df["IMDb Rating"].dropna(), bins=15, kde=True, color="steelblue")
-plt.xlabel("IMDb Rating")
-plt.ylabel("Count")
-plt.title("Distribution of IMDb Ratings")
-plt.tight_layout()
-plt.show()
-
-
-# 4. Rating vs. year
-plt.figure(figsize=(10, 5))
-sns.regplot(
-    data=df,
-    x="Year",
-    y="IMDb Rating",
-    scatter_kws={"alpha": 0.6},
-    line_kws={"color": "red"}
-)
-
-plt.xlabel("Year")
-plt.ylabel("IMDb Rating")
-plt.title("IMDb Rating vs. Year")
-plt.xlim(2000, df["Year"].max())
-plt.ylim(0, 10)
-plt.xticks(range(2000, df["Year"].max() + 1, 10))
-plt.tight_layout()
-plt.show()
-
-print("Correlation (Rating vs Year):", df["Year"].corr(df["IMDb Rating"]))
-
-
-# 5. Rating vs. duration
+# Rating vs. duration
 plt.figure(figsize=(8, 5)) #(X,y)
 sns.regplot(
     data=df,
@@ -94,6 +64,42 @@ plt.show()
 
 print("Correlation (Rating vs Duration):", df["Duration"].corr(df["IMDb Rating"]))
 
+# Average Movie Length per Genre
+avg_duration = (
+    genre_df.groupby("Genres")["Duration"]
+    .mean()
+    .sort_values(ascending=False)
+)
+
+print("Average Duration per Genre:")
+print(avg_duration)
+
+# Plot
+plt.figure(figsize=(14, 8))
+bars = plt.bar(avg_duration.index, avg_duration.values, color="seagreen")
+
+plt.title("Average Movie Duration by Genre")
+plt.ylabel("Duration (minutes)")
+plt.xlabel("Genre")
+
+# Rotate x-axis labels for readability
+plt.xticks(rotation=45, ha="right")
+
+# Add vertical data labels
+for bar in bars:
+    height = bar.get_height()
+    plt.text(
+        bar.get_x() + bar.get_width()/2,
+        height + 1,
+        f"{height:.1f}",
+        ha="center",
+        va="bottom",
+        rotation=45
+    )
+
+plt.tight_layout()
+plt.show()
+
 #----------------------
 # Genre Analysis
 #----------------------
@@ -104,24 +110,70 @@ genre_counts = genre_df["Genres"].value_counts()
 print("Most Common Genres:")
 print(genre_counts)
 
-# Plot
 plt.figure(figsize=(10, 6))
-plt.barh(genre_counts.index, genre_counts.values, color="steelblue")
+bars = plt.bar(genre_counts.index, genre_counts.values, color="steelblue")
 plt.xlabel("Count")
 plt.title("Most Common Genres")
-plt.gca().invert_yaxis()
+plt.xticks(rotation=45, ha="right")
+for bar in bars:
+    height = bar.get_height()
+    plt.text(
+        bar.get_x() + bar.get_width()/2,
+        height + 0.5,
+        str(height),
+        ha='center',
+        va='bottom',
+        rotation=45
+    )
 plt.tight_layout()
 plt.show()
 
 # 2. Cluster Movies by Genre Combinations
-# Convert list → tuple so it can be grouped
-df["Genre Combo"] = df["Genres"].apply(tuple)
+df["Genre Combo"] = df["Genres"].apply(tuple) # Convert list → tuple so it can be grouped
 
 genre_clusters = df.groupby("Genre Combo").size().sort_values(ascending=False)
 
 print("Genre Combination Clusters:")
 print(genre_clusters)
 
+# 3. Genres combined with animation
+animated_movies = df[df["Genres"].apply(lambda g: "Animation" in g)]
+# Flatten all genres from animation movies
+all_genres = [genre for genres in animated_movies["Genres"] for genre in genres]
+
+# Count them
+genre_counts = Counter(all_genres)
+
+# Remove Animation itself
+genre_counts.pop("Animation", None)
+
+# Convert to a sorted Series
+genre_counts = pd.Series(genre_counts).sort_values(ascending=False)
+
+plt.figure(figsize=(14, 8))
+bars = plt.bar(genre_counts.index, genre_counts.values, color="seagreen")
+
+plt.title("Genres Common with Animation")
+plt.ylabel("Count")
+
+# Rotate x-axis labels for readability
+plt.xticks(rotation=45, ha="right")
+
+# Add vertical data labels
+for bar in bars:
+    height = bar.get_height()
+    plt.text(
+        bar.get_x() + bar.get_width()/2,
+        height,
+        str(height),
+        ha='center',
+        va='bottom',
+        rotation=45
+    )
+
+plt.tight_layout()
+plt.show()
+print(genre_counts)
 #----------------------
 # Director Analysis
 #----------------------
@@ -151,33 +203,45 @@ plt.show()
 
 # 2. Director Genre Specialization
 collab_counter = Counter()
-
+pair_ratings = defaultdict(list)
 for _, row in df.iterrows():
     directors = row["Director"]
     actors = row["Cast"]
-    
+    rating = row["IMDb Rating"]
+
     # Count every director–actor pair
     for d, a in product(directors, actors):
-        collab_counter[(d, a)] += 1
+        pair_ratings[(d, a)].append(rating)
 
-print("Top Director–Actor Collaborations:")
-for (director, actor), count in collab_counter.most_common(20):
-    print(f"{director} & {actor} → {count} movies")
+avg_pair_ratings = {
+    (d, a): sum(ratings) / len(ratings)
+    for (d, a), ratings in pair_ratings.items()
+}
+
+# Convert to DataFrame for easy sorting
+ratings_df = (
+    pd.DataFrame([
+        {"Director": d, "Actor": a, "Avg_Rating": avg, "Count": len(pair_ratings[(d, a)])}
+        for (d, a), avg in avg_pair_ratings.items()
+    ])
+    .sort_values(by="Count", ascending=False)
+)
+
+print(ratings_df.head(20))
 
 # 3. Get top 10 director–actor pairs
 top = collab_counter.most_common(10)
 
 # Build a graph with only those edges
 G = nx.Graph()
-
 for (director, actor), count in top:
     G.add_edge(director, actor, weight=count)
 
 # Visualise
 plt.figure(figsize=(10, 8))
 
-# Use circular layout (no SciPy needed)
-pos = nx.circular_layout(G)
+# SciPy-accelerated spring layout (if SciPy is installed)
+pos = nx.spring_layout(G, k=0.6, seed=42)
 
 # Node sizes scaled by number of connections
 nx.draw_networkx_nodes(G, pos, node_size=1200, node_color="lightblue")
@@ -191,9 +255,10 @@ nx.draw_networkx_edges(
 # Labels
 nx.draw_networkx_labels(G, pos, font_size=10)
 
-plt.title("Top 5 Director–Actor Collaborations")
+plt.title("Top 10 Director–Actor Collaborations")
 plt.axis("off")
 plt.show()
+
 
 #----------------------
 # Cast Analysis
@@ -256,39 +321,6 @@ plt.figure(figsize=(10, 8))
 plt.barh(actor_avg_rating.head(20).index, actor_avg_rating.head(20).values, color="darkgreen")
 plt.xlabel("Average IMDb Rating")
 plt.title("Top 20 Actors by Average Movie Rating")
-plt.gca().invert_yaxis()
-plt.tight_layout()
-plt.show()
-
-#----------------------
-# Duration Analysis
-#----------------------
-# 1. Duration Distribution
-plt.figure(figsize=(10, 6))
-plt.hist(df["Duration"], bins=20, color="skyblue", edgecolor="black")
-plt.xlabel("Duration (minutes)")
-plt.ylabel("Number of Movies")
-plt.title("Distribution of Movie Durations")
-plt.tight_layout()
-plt.show()
-
-#----------------------
-# Providers Analysis
-#----------------------
-# 1. Providers by number of movies
-provider_df = df.explode("Providers")
-
-provider_counts = (
-    provider_df["Providers"]
-    .value_counts()
-    .sort_values(ascending=False)
-)
-top20_providers = provider_counts.head(20)
-print(top20_providers)
-plt.figure(figsize=(12, 8))
-plt.barh(top20_providers.index, top20_providers.values, color="teal")
-plt.xlabel("Number of Movies")
-plt.title("Top 20 Providers by Number of Movies")
 plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
