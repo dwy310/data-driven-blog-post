@@ -177,7 +177,6 @@ print(genre_counts)
 #----------------------
 # Director Analysis
 #----------------------
-
 # 1. Top‑Rated Directors
 # Explode directors into separate rows
 director_df = df.explode("Director")
@@ -201,7 +200,7 @@ plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
 
-# 2. Director Genre Specialization
+# 2. Director-Actor Collab
 collab_counter = Counter()
 pair_ratings = defaultdict(list)
 for _, row in df.iterrows():
@@ -211,6 +210,7 @@ for _, row in df.iterrows():
 
     # Count every director–actor pair
     for d, a in product(directors, actors):
+        collab_counter[(d, a)] += 1
         pair_ratings[(d, a)].append(rating)
 
 avg_pair_ratings = {
@@ -229,7 +229,6 @@ ratings_df = (
 
 print(ratings_df.head(20))
 
-# 3. Get top 10 director–actor pairs
 top = collab_counter.most_common(10)
 
 # Build a graph with only those edges
@@ -240,7 +239,6 @@ for (director, actor), count in top:
 # Visualise
 plt.figure(figsize=(10, 8))
 
-# SciPy-accelerated spring layout (if SciPy is installed)
 pos = nx.spring_layout(G, k=0.6, seed=42)
 
 # Node sizes scaled by number of connections
@@ -285,26 +283,7 @@ plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
 
-# 2. Actor-Director Collaboration
-top5 = collab_counter.most_common(10)
-
-G = nx.Graph()
-
-for (director, actor), count in top5:
-    G.add_edge(director, actor, weight=count)
-
-plt.figure(figsize=(10, 8))
-pos = nx.circular_layout(G)
-
-nx.draw_networkx_nodes(G, pos, node_size=1200, node_color="lightblue")
-nx.draw_networkx_edges(G, pos, width=[count for (_, _), count in top5])
-nx.draw_networkx_labels(G, pos, font_size=10)
-
-plt.title("Top Director–Actor Collaborations")
-plt.axis("off")
-plt.show()
-
-# 3. Star Power
+# 2. Star Power
 # Explode actors into rows
 actor_df = df.explode("Cast")
 
