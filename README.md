@@ -5,7 +5,6 @@ This project demonstrates an end‑to‑end data workflow:
 - **Cleaning and structuring** the scraped dataset
 - Saving reproducible outputs into a dedicated data/ folder
 - Exploring sentiment‑style patterns using IMDb ratings
-- Applying modelling techniques to understand what drives movie ratings
 - **Preparing results for a data‑driven blog post**
 
 The dataset includes:
@@ -31,7 +30,7 @@ Before running the scraper, ensure you have the following:
 
 You can install the necessary libraries using pip:
 ```bash
-python -m pip install requests beautifulsoup4 pandas selenium Seaborn
+python -m pip install requests beautifulsoup4 pandas selenium seaborn
 
 ```
 
