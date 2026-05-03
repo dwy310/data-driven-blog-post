@@ -103,32 +103,7 @@ plt.show()
 #----------------------
 # Genre Analysis
 #----------------------
-# 1. Most Common Genres
-# Count frequency
-genre_counts = genre_df["Genres"].value_counts()
-
-print("Most Common Genres:")
-print(genre_counts)
-
-plt.figure(figsize=(10, 6))
-bars = plt.bar(genre_counts.index, genre_counts.values, color="steelblue")
-plt.xlabel("Count")
-plt.title("Most Common Genres")
-plt.xticks(rotation=45, ha="right")
-for bar in bars:
-    height = bar.get_height()
-    plt.text(
-        bar.get_x() + bar.get_width()/2,
-        height + 0.5,
-        str(height),
-        ha='center',
-        va='bottom',
-        rotation=45
-    )
-plt.tight_layout()
-plt.show()
-
-# 2. Cluster Movies by Genre Combinations
+# 1. Cluster Movies by Genre Combinations
 df["Genre Combo"] = df["Genres"].apply(tuple) # Convert list → tuple so it can be grouped
 
 genre_clusters = df.groupby("Genre Combo").size().sort_values(ascending=False)
@@ -196,9 +171,9 @@ plt.figure(figsize=(10, 6))
 plt.barh(director_ratings.head(10).index, director_ratings.head(10).values, color="darkgreen")
 plt.xlabel("Average IMDb Rating")
 plt.title("Top‑Rated Directors")
-plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
+
 
 # 2. Director-Actor Collab
 collab_counter = Counter()
@@ -229,34 +204,22 @@ ratings_df = (
 
 print(ratings_df.head(20))
 
-top = collab_counter.most_common(10)
+# Take top 10 by collaboration count
+top10 = ratings_df.sort_values("Count", ascending=False).head(10)
 
-# Build a graph with only those edges
-G = nx.Graph()
-for (director, actor), count in top:
-    G.add_edge(director, actor, weight=count)
-
-# Visualise
-plt.figure(figsize=(10, 8))
-
-pos = nx.spring_layout(G, k=0.6, seed=42)
-
-# Node sizes scaled by number of connections
-nx.draw_networkx_nodes(G, pos, node_size=1200, node_color="lightblue")
-
-# Edge width scaled by collaboration count
-nx.draw_networkx_edges(
-    G, pos,
-    width=[count for (_, _), count in top]
+plt.figure(figsize=(10, 6))
+sns.barplot(
+    data=top10,
+    x="Count",
+    y=top10["Director"] + " & " + top10["Actor"],
+    palette="Blues_r"
 )
 
-# Labels
-nx.draw_networkx_labels(G, pos, font_size=10)
-
-plt.title("Top 10 Director–Actor Collaborations")
-plt.axis("off")
+plt.title("Top 10 Director–Actor Collaborations (by Count)")
+plt.xlabel("Number of Movies Together")
+plt.ylabel("Director–Actor Pair")
+plt.tight_layout()
 plt.show()
-
 
 #----------------------
 # Cast Analysis
