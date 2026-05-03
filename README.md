@@ -17,6 +17,15 @@ The dataset includes:
 - Director
 - Providers (streaming availability)
 
+# ⚠️ Data Disclaimer
+The dataset used in this project is scraped directly from JustWatch. Because the JustWatch website relies on lazy‑loading (content loads dynamically as the user scrolls), the number of movies scraped will vary each time scrape.py is run. Factors such as network speed, page rendering timing, and how quickly new tiles load can all influence how many movie entries are captured.
+
+As a result:
+- The dataset is not guaranteed to be identical across runs
+- Some movies may be missed if they fail to load during scrolling
+- Some movies may appear as duplicates due to JustWatch re‑rendering tiles during lazy‑load events
+- This variability is an inherent limitation of scraping dynamically loaded websites and should be considered when interpreting the results.
+
 ## Prerequisites
 
 Before running the scraper, ensure you have the following:
@@ -26,7 +35,7 @@ Before running the scraper, ensure you have the following:
 - BeautifulSoup
 - Requests
 - Pandas
-- Seasborn
+- Seaborn
 
 You can install the necessary libraries using pip:
 ```bash
@@ -47,7 +56,6 @@ python -m pip install requests beautifulsoup4 pandas selenium seaborn
    python scrape.py
    ```
 
-
 3. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
    ```bash
    python clean.py
@@ -65,8 +73,18 @@ python -m pip install requests beautifulsoup4 pandas selenium seaborn
 │
 ├── data
 │   ├── movies.csv          <- Original scraped movie metadata (CSV)             
-│   └── movies_cleaned.csv  <- Final cleaned dataset used for analysis and visualisation
+│   └── movies_clean.csv  <- Final cleaned dataset used for analysis and visualisation
 │
+├── output
+│   ├── figure_1          <- Highest Rated Genres     
+│   ├── figure_2          <- IMDb Rating vs Duration    
+│   ├── figure_3          <- Average Movie Duration by Genre  
+│   ├── figure_4          <- Genre Common with Animation 
+│   ├── figure_5          <- Top-Rated Directors 
+│   ├── figure_6          <- Top 10 Director-Actor Collaboration  
+│   ├── figure_7          <- Top 20 Most Frequent Actors          
+│   └── figure_8          <- Top 20 Actors by Movie Rating
+│ 
 └── src                     <- Source code for the project
     ├── scrape.py           <- Script to scrape movie metadata from JustWatch
     ├── clean.py            <- Script to clean, parse, and structure the dataset

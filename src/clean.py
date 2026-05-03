@@ -46,9 +46,11 @@ df["Year"] = df["Year"].fillna(0).astype(int)
 df["IMDb Rating"] = df["IMDb Rating"].fillna(0)
 df["Duration"] = df["Duration"].fillna("0")
 
-# Cast and Director → "Unknown"
-df["Cast"] = df["Cast"].fillna("Unknown")
-df["Director"] = df["Director"].fillna("Unknown")
+# Remove rows where Cast or Director are "N/A"
+df = df[
+    (df["Cast"] != "N/A") &
+    (df["Director"] != "N/A")
+]
 
 # 5. Convert Duration to minutes
 def duration_to_minutes(x):
@@ -84,7 +86,7 @@ df.drop(columns=["Review Count Raw"], inplace=True)
 
 # 9. Save clean data into CSV in data folder
 df.to_csv(
-    os.path.abspath(os.path.join(BASE_DIR, "..", "data-driven-blog-post", "data", "movies_clean.csv")),
+    os.path.abspath(os.path.join(BASE_DIR, "..", "data-driven-blog-post", "data", "movies_clean1.csv")),
     index=False
 )
 
