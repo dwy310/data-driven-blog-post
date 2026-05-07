@@ -74,7 +74,7 @@ print(f"Total movie links: {len(links)}")
 
 
 # -----------------------------
-# SCRAPE EACH MOVIE PAGE
+# SCRAPE EACH MOVIE PAGE BY BATCHES
 # -----------------------------
 batch_size = 20
 data = []
@@ -97,7 +97,6 @@ for start in range(0, len(links), batch_size):
 
         soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-        # --- your extraction code stays EXACTLY the same ---
         try:
             title = soup.find('h1').get_text(strip=True)
         except:
@@ -161,7 +160,7 @@ for start in range(0, len(links), batch_size):
             "Providers": providers
         })
 
-    # SAVE AFTER EACH BATCH
+    # Save batches into csv file
     df = pd.DataFrame(data)
     df.to_csv(os.path.join("data", "movies.csv"), index=False)
     print(f"Saved batch {start//batch_size + 1} to movies.csv")
