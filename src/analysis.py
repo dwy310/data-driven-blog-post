@@ -12,7 +12,7 @@ from collections import defaultdict, Counter
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Build absolute path to movies_clean.csv
-df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies_clean1.csv")))
+df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies_clean.csv")))
 
 # Data Preparation
 # Convert list-like strings into list objects 
