@@ -95,11 +95,6 @@ Before running the scraper, ensure you have the following:
 ### System
 - Python (tested with version 3.x)
 
-### Python Packages
-Install all dependencies via pip: 
-```bash
-python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 pandas==3.0.2 selenium==4.43.0 seaborn==0.13.2
-```
 ---
 
 ## Running Instructions
@@ -108,14 +103,21 @@ python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 panda
    ```bash
    git clone https://github.com/dwy310/data-driven-blog-post.git
    ```
-
-2. **Run scrape.py script**: Run this script to webscrape JustWatch using Python (Make sure you are inside the folder)
+2. **Set Up venv:**
+   ```bash
+   python -m venv venv
+   ```
+3. **Install Python Packages**: Install all dependencies via pip: 
+   ```bash
+python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 pandas==3.0.2 selenium==4.43.0 seaborn==0.13.2
+   ```
+4. **Run scrape.py script**: Run this script to webscrape JustWatch using Python (Make sure you are inside the folder)
    ```bash
    python src/scraper.py
    ```
 **NOTE:** If scraping cannot be completed, or if you prefer not to run the scraper at all, you can instead use the pre‑scraped CSV files provided in the data/ folder. Both the pre‑saved dataset and your own partially or fully scraped CSV files can be used directly with clean.py to continue the workflow without interruption.
 
-3. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
+5. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
    ```bash
    python src/clean.py
    ```
@@ -124,7 +126,7 @@ scraped data, no changes are required.
 
 Both the pre‑saved CSV and your newly scraped CSV contain the same structure, so clean.py will run normally with either file. 
 
-4. **Run analysis.py script**: Run this script to produce figures and conduct analysis (Make sure you are inside the folder)
+6. **Run analysis.py script**: Run this script to produce figures and conduct analysis (Make sure you are inside the folder)
    ```bash
    python src/analysis.py
    ```
