@@ -20,7 +20,7 @@ This project demonstrates an end‑to‑end data workflow:
 ---
 
 ## Data
-The datasets (`movies.csv` and `movies_clean.csv`) comes directly from JustWatch.com's popular tab. Both are in csv format and is read directly using `pandas`.
+The datasets (`movies.csv` and `movies_clean.csv`) comes directly from [JustWatch.com's popular tab](https://www.justwatch.com/us/movies?release_year_from=2000). Both are in csv format and is read directly using `pandas`.
 
 The key variables used in this analysis are:
 
@@ -50,23 +50,23 @@ As a result:
 ├── README.md               <- Top‑level project overview, instructions, and documentation
 │
 ├── data
-│   ├── movies.csv          <- Original scraped movie metadata (CSV)             
-│   └── movies_clean.csv    <- Final cleaned dataset used for analysis and visualisation
+│   ├── pre-saved_movies.csv <- Original scraped movie metadata (CSV)             
+│   └── movies_clean.csv     <- Final cleaned dataset used for analysis and visualisation
 │
 ├── output
-│   ├── figure_1            <- Highest Rated Genres     
-│   ├── figure_2            <- IMDb Rating vs Duration    
-│   ├── figure_3            <- Average Movie Duration by Genre  
-│   ├── figure_4            <- Genre Common with Animation 
-│   ├── figure_5            <- Top-Rated Directors 
-│   ├── figure_6            <- Top 10 Director-Actor Collaboration  
-│   ├── figure_7            <- Top 20 Most Frequent Actors          
-│   └── figure_8            <- Top 20 Actors by Movie Rating
+│   ├── figure_1             <- Highest Rated Genres     
+│   ├── figure_2             <- IMDb Rating vs Duration    
+│   ├── figure_3             <- Average Movie Duration by Genre  
+│   ├── figure_4             <- Genre Common with Animation 
+│   ├── figure_5             <- Top-Rated Directors 
+│   ├── figure_6             <- Top 10 Director-Actor Collaboration  
+│   ├── figure_7             <- Top 20 Most Frequent Actors          
+│   └── figure_8             <- Top 20 Actors by Movie Rating
 │ 
-└── src                     <- Source code for the project
+└── src                      <- Source code for the project
     ├── scraper.py           <- Script to scrape movie metadata from JustWatch
-    ├── clean.py            <- Script to clean, parse, and structure the dataset
-    └── analysis.py         <- Script to run analysis and generate figures   
+    ├── clean.py             <- Script to clean, parse, and structure the dataset
+    └── analysis.py          <- Script to run analysis and generate figures   
 ```
 ---
 
@@ -95,13 +95,13 @@ python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 panda
    ```bash
    python src/scraper.py
    ```
-NOTE: If scraping cannot be completed, or if you prefer not to run the scraper at all, you can instead use the pre‑scraped CSV files provided in the data/ folder. Both the pre‑saved dataset and your own partially or fully scraped CSV files can be used directly with clean.py to continue the workflow without interruption.
+**NOTE:** If scraping cannot be completed, or if you prefer not to run the scraper at all, you can instead use the pre‑scraped CSV files provided in the data/ folder. Both the pre‑saved dataset and your own partially or fully scraped CSV files can be used directly with clean.py to continue the workflow without interruption.
 
 3. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
    ```bash
    python src/clean.py
    ```
-NOTE: If you are using the pre‑saved dataset instead of newly scraped data, remember to update the input filename on line 29. Change "movies.csv" to"pre-saved_movies.csv" when loading the dataset. If you are using your own
+**NOTE:** If you are using the pre‑saved dataset instead of newly scraped data, remember to update the input filename on line 29. Change "movies.csv" to"pre-saved_movies.csv" when loading the dataset. If you are using your own
 scraped data, no changes are required.
 
 Both the pre‑saved CSV and your newly scraped CSV contain the same structure, so clean.py will run normally with either file. 
