@@ -109,8 +109,8 @@ Before running the scraper, ensure you have the following:
    ```
 3. **Install Python Packages**: Install all dependencies via pip
    ```bash
-python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 pandas==3.0.2 selenium==4.43.0 seaborn==0.13.2
-
+   python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 pandas==3.0.2 selenium==4.43.0 seaborn==0.13.2
+   ```
 4. **Run scrape.py script**: Run this script to webscrape JustWatch using Python (Make sure you are inside the folder)
    ```bash
    python src/scraper.py
