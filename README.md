@@ -47,7 +47,7 @@ As a result:
 
 ## Repository Structure
 ```
-├── README.md               <- Top‑level project overview, instructions, and documentation
+├── README.md                <- Top‑level project overview, instructions, and documentation
 │
 ├── data
 │   ├── pre-saved_movies.csv <- Original scraped movie metadata (CSV)             
