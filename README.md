@@ -95,11 +95,16 @@ python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 panda
    ```bash
    python src/scraper.py
    ```
+NOTE: If scraping cannot be completed, or if you prefer not to run the scraper at all, you can instead use the pre‑scraped CSV files provided in the data/ folder. Both the pre‑saved dataset and your own partially or fully scraped CSV files can be used directly with clean.py to continue the workflow without interruption.
 
 3. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
    ```bash
    python src/clean.py
    ```
+NOTE: If you are using the pre‑saved dataset instead of newly scraped data, remember to update the input filename on line 29. Change "movies.csv" to"pre-saved_movies.csv" when loading the dataset. If you are using your own
+scraped data, no changes are required.
+
+Both the pre‑saved CSV and your newly scraped CSV contain the same structure, so clean.py will run normally with either file. 
 
 4. **Run analysis.py script**: Run this script to produce figures and conduct analysis (Make sure you are inside the folder)
    ```bash

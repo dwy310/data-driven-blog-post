@@ -79,7 +79,7 @@ df["Providers"] = df["Providers"].str.split(", ")
 
 # 7. Save clean data into CSV in data folder
 df.to_csv(
-    os.path.abspath(os.path.join(BASE_DIR, "..", "data", "movies_clean1.csv")),
+    os.path.abspath(os.path.join(BASE_DIR, "..", "data", "movies_clean.csv")),
     index=False
 )
 

@@ -1,3 +1,21 @@
+'''
+This script scrapes movie metadata from JustWatch, collecting information such as
+titles, release years, IMDb ratings, genres, cast, directors, and streaming
+providers. The scraper navigates through multiple pages of search results,
+extracts structured information from each movie entry, and stores the results in
+a raw CSV file for later cleaning and analysis.
+
+The script uses Selenium to load dynamic webpage content and BeautifulSoup to
+parse the HTML. It includes logic to handle pagination, avoid duplicate links,
+and ensure that only valid movie entries are collected. The output of this file
+serves as the raw input for clean.py, where the dataset is validated,
+standardised, and prepared for the analysis pipeline.
+
+This scraper forms the first stage of the workflow for the data‑driven blog
+project, ensuring that all downstream analysis is based on consistently scraped
+and reproducible movie data.
+'''
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
