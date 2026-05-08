@@ -1,3 +1,21 @@
+'''
+This script cleans and prepares the raw movie metadata scraped from JustWatch.
+The raw dataset contains mixed formats, list-like strings, embedded years in
+titles, and non‑numeric rating fields. The goal of this file is to convert the
+scraped data into a consistent, analysis‑ready structure.
+
+Key cleaning steps include:
+- Converting list‑formatted strings (Genres, Cast, Director, Providers) into
+  real Python lists using ast.literal_eval.
+- Extracting release years from title strings when the Year field is missing.
+- Cleaning IMDb ratings by isolating the numeric component and converting it
+  to float.
+- Removing rows where Year, IMDb Rating, and Duration are all missing.
+- Standardising column types and validating the dataset for NaN values.
+
+The cleaned dataset produced by this script is used throughout the analysis
+pipeline to generate figures, tables, and the final blog post.
+'''
 import pandas as pd
 import numpy as np
 import re
@@ -8,7 +26,7 @@ import ast
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) # Folder where clean.py lives
 
 # Build absolute path to movies.csv
-df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies.csv")))
+df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data", "movies.csv")))
 
 # 1. Remove rows where Year, IMDb Rating, and Duration are all "N/A"
 df = df[~(
@@ -61,7 +79,7 @@ df["Providers"] = df["Providers"].str.split(", ")
 
 # 7. Save clean data into CSV in data folder
 df.to_csv(
-    os.path.abspath(os.path.join(BASE_DIR, "..", "data-driven-blog-post", "data", "movies_clean.csv")),
+    os.path.abspath(os.path.join(BASE_DIR, "..", "data", "movies_clean1.csv")),
     index=False
 )
 

@@ -64,7 +64,7 @@ As a result:
 │   └── figure_8            <- Top 20 Actors by Movie Rating
 │ 
 └── src                     <- Source code for the project
-    ├── scrape.py           <- Script to scrape movie metadata from JustWatch
+    ├── scraper.py           <- Script to scrape movie metadata from JustWatch
     ├── clean.py            <- Script to clean, parse, and structure the dataset
     └── analysis.py         <- Script to run analysis and generate figures   
 ```
@@ -80,7 +80,7 @@ Before running the scraper, ensure you have the following:
 ### Python Packages
 Install all dependencies via pip: 
 ```bash
-python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy== 2.4.4 pandas==3.0.2 selenium==4.43.0 seaborn==0.13.2
+python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy==2.4.4 pandas==3.0.2 selenium==4.43.0 seaborn==0.13.2
 ```
 ---
 
@@ -93,17 +93,17 @@ python -m pip install requests==2.33.1 beautifulsoup4==4.14.3 numpy== 2.4.4 pand
 
 2. **Run scrape.py script**: Run this script to webscrape JustWatch using Python (Make sure you are inside the folder)
    ```bash
-   python scrape.py
+   python src/scraper.py
    ```
 
 3. **Run clean.py script**: Run this script to clean raw data file (Make sure you are inside the folder)
    ```bash
-   python clean.py
+   python src/clean.py
    ```
 
 4. **Run analysis.py script**: Run this script to produce figures and conduct analysis (Make sure you are inside the folder)
    ```bash
-   python analysis.py
+   python src/analysis.py
    ```
 ---
 

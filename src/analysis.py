@@ -1,8 +1,22 @@
+'''
+This script performs the full exploratory analysis for the movie dataset after
+cleaning. It loads the processed CSV produced by clean.py and generates all
+figures and tables used in the final blog post.
+
+The analysis covers:
+- Descriptive statistics for ratings, runtimes, and release years.
+- Genre‑level summaries, including frequency counts and average IMDb ratings.
+- Actor and director analyses, such as top performers and collaboration patterns.
+- Visualisations including bar charts, histograms and scatter plots.
+
+This script forms the analytical core of the project, transforming the
+cleaned dataset into interpretable insights and publication‑ready visuals.
+'''
+
 import pandas as pd
 import ast
 import matplotlib.pyplot as plt
 import seaborn as sns
-import networkx as nx
 import numpy as np
 import os
 from itertools import product
@@ -12,7 +26,7 @@ from collections import defaultdict, Counter
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Build absolute path to movies_clean.csv
-df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies_clean.csv")))
+df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data", "movies_clean.csv")))
 
 # Data Preparation
 # Convert list-like strings into list objects 
