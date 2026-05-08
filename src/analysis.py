@@ -11,17 +11,18 @@ from collections import defaultdict, Counter
 # Folder where analysis.py lives
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Build absolute path to movies.csv
-df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies_clean.csv")))
+# Build absolute path to movies_clean.csv
+df = pd.read_csv(os.path.abspath(os.path.join(BASE_DIR, "..","data-driven-blog-post","data", "movies_clean1.csv")))
 
 # Data Preparation
+# Convert list-like strings into list objects 
 df["Cast"] = df["Cast"].apply(ast.literal_eval)
 df["Director"] = df["Director"].apply(ast.literal_eval)
 df["Providers"] = df["Providers"].apply(ast.literal_eval)
 df["Genres"] = df["Genres"].apply(lambda x: ast.literal_eval(x))
 
 #----------------------
-# EDA 
+# Prelimanary EDA 
 #----------------------
 # Highest‑rated genres
 genre_df = df.explode("Genres")
@@ -74,18 +75,13 @@ avg_duration = (
 print("Average Duration per Genre:")
 print(avg_duration)
 
-# Plot
 plt.figure(figsize=(14, 8))
 bars = plt.bar(avg_duration.index, avg_duration.values, color="seagreen")
 
 plt.title("Average Movie Duration by Genre")
 plt.ylabel("Duration (minutes)")
 plt.xlabel("Genre")
-
-# Rotate x-axis labels for readability
 plt.xticks(rotation=45, ha="right")
-
-# Add vertical data labels
 for bar in bars:
     height = bar.get_height()
     plt.text(
@@ -103,7 +99,7 @@ plt.show()
 #----------------------
 # Genre Analysis
 #----------------------
-# 1. Cluster Movies by Genre Combinations
+# Cluster Movies by Genre Combinations
 df["Genre Combo"] = df["Genres"].apply(tuple) # Convert list → tuple so it can be grouped
 
 genre_clusters = df.groupby("Genre Combo").size().sort_values(ascending=False)
@@ -111,30 +107,18 @@ genre_clusters = df.groupby("Genre Combo").size().sort_values(ascending=False)
 print("Genre Combination Clusters:")
 print(genre_clusters)
 
-# 3. Genres combined with animation
+# Genres combined with animation
 animated_movies = df[df["Genres"].apply(lambda g: "Animation" in g)]
-# Flatten all genres from animation movies
 all_genres = [genre for genres in animated_movies["Genres"] for genre in genres]
-
-# Count them
 genre_counts = Counter(all_genres)
-
-# Remove Animation itself
 genre_counts.pop("Animation", None)
-
-# Convert to a sorted Series
 genre_counts = pd.Series(genre_counts).sort_values(ascending=False)
 
 plt.figure(figsize=(14, 8))
 bars = plt.bar(genre_counts.index, genre_counts.values, color="seagreen")
-
 plt.title("Genres Common with Animation")
 plt.ylabel("Count")
-
-# Rotate x-axis labels for readability
 plt.xticks(rotation=45, ha="right")
-
-# Add vertical data labels
 for bar in bars:
     height = bar.get_height()
     plt.text(
@@ -149,14 +133,12 @@ for bar in bars:
 plt.tight_layout()
 plt.show()
 print(genre_counts)
+
 #----------------------
 # Director Analysis
 #----------------------
-# 1. Top‑Rated Directors
-# Explode directors into separate rows
-director_df = df.explode("Director")
-
-# Compute average rating per director
+# Top‑Rated Directors
+director_df = df.explode("Director") # Explode directors into separate rows
 director_ratings = (
     director_df.groupby("Director")["IMDb Rating"]
     .mean()
@@ -166,7 +148,6 @@ director_ratings = (
 print("Top‑Rated Directors:")
 print(director_ratings.head(10))
 
-# Visualize
 plt.figure(figsize=(10, 6))
 plt.barh(director_ratings.head(10).index, director_ratings.head(10).values, color="darkgreen")
 plt.xlabel("Average IMDb Rating")
@@ -175,7 +156,7 @@ plt.tight_layout()
 plt.show()
 
 
-# 2. Director-Actor Collab
+# Director-Actor Collab
 collab_counter = Counter()
 pair_ratings = defaultdict(list)
 for _, row in df.iterrows():
@@ -193,8 +174,7 @@ avg_pair_ratings = {
     for (d, a), ratings in pair_ratings.items()
 }
 
-# Convert to DataFrame for easy sorting
-ratings_df = (
+ratings_df = ( # Convert to DataFrame for easy sorting
     pd.DataFrame([
         {"Director": d, "Actor": a, "Avg_Rating": avg, "Count": len(pair_ratings[(d, a)])}
         for (d, a), avg in avg_pair_ratings.items()
@@ -224,11 +204,12 @@ plt.show()
 #----------------------
 # Cast Analysis
 #----------------------
-# 1. Actor Frequency
+# Actor Frequency
 actor_counter = Counter()
 
-for cast_list in df["Cast"]:
-    actor_counter.update(cast_list)
+for cast_list in df["Cast"]: # Exclude Unknown in Cast list
+    cleaned_cast = [actor for actor in cast_list if actor != "Unknown"]
+    actor_counter.update(cleaned_cast)
 
 top_20_actors = actor_counter.most_common(20)
 
@@ -236,7 +217,7 @@ print("Top 20 Most Frequent Actors:")
 for actor, count in top_20_actors:
     print(f"{actor}: {count} movies")
 
-actors, counts = zip(*top_20_actors)
+actors, counts = zip(*top_20_actors) # Unpack the list of (actor, count) tuples into two separate lists:
 
 plt.figure(figsize=(10, 8))
 plt.barh(actors, counts, color="teal")
@@ -246,12 +227,40 @@ plt.gca().invert_yaxis()
 plt.tight_layout()
 plt.show()
 
-# 2. Star Power
-# Explode actors into rows
-actor_df = df.explode("Cast")
+# Frequent Actors Average IMDB Rating
+actors = [actor for actor, _ in top_20_actors] # Extract actor names
+counts = {actor: count for actor, count in top_20_actors}
 
-# Compute average rating per actor
-actor_avg_rating = (
+actor_avg_ratings = {} # Compute average IMDb rating for each actor
+for actor in actors:
+    # Filter rows where actor appears in the Cast list
+    actor_movies = df[df["Cast"].apply(lambda x: actor in x)]
+    avg_rating = actor_movies["IMDb Rating"].mean()
+    actor_avg_ratings[actor] = avg_rating
+
+ratings_df = ( # Convert to DataFrame
+    pd.DataFrame({
+        "Actor": list(actor_avg_ratings.keys()),
+        "Avg_Rating": list(actor_avg_ratings.values()),
+        "Count": [counts[a] for a in actors],
+    })
+    .sort_values(by="Count", ascending=False)
+)
+
+print("Average IMDb Rating for the Same Top 20 Frequent Actors:")
+print(ratings_df)
+
+plt.figure(figsize=(10, 8))
+plt.barh(ratings_df["Actor"], ratings_df["Avg_Rating"], color="darkred")
+plt.xlabel("Average IMDb Rating")
+plt.title("Average IMDb Rating of the Top 20 Most Frequent Actors")
+plt.gca().invert_yaxis()
+plt.tight_layout()
+plt.show()
+
+# Star Power
+actor_df = df.explode("Cast") # Explode actors into rows
+actor_avg_rating = ( # Compute average rating per actor
     actor_df.groupby("Cast")["IMDb Rating"]
     .mean()
     .sort_values(ascending=False)
