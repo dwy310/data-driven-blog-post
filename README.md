@@ -6,8 +6,9 @@
 1. [Overview](#overview)
 2. [Data](#data)
 3. [Repository Structure](#repository-structure)
-4. [Requirements](#requirements)
-5. [Running Instructions](#running-instructions)
+4. [Outputs](#outputs)
+5. [Requirements](#requirements)
+6. [Running Instructions](#running-instructions)
 ---
 
 ## Overview
@@ -53,15 +54,15 @@ As a result:
 │   ├── pre-saved_movies.csv <- Original scraped movie metadata (CSV)             
 │   └── movies_clean.csv     <- Final cleaned dataset used for analysis and visualisation
 │
-├── output
-│   ├── figure_1             <- Highest Rated Genres     
-│   ├── figure_2             <- IMDb Rating vs Duration    
-│   ├── figure_3             <- Average Movie Duration by Genre  
-│   ├── figure_4             <- Genre Common with Animation 
-│   ├── figure_5             <- Top-Rated Directors 
-│   ├── figure_6             <- Top 10 Director-Actor Collaboration  
-│   ├── figure_7             <- Top 20 Most Frequent Actors          
-│   └── figure_8             <- Top 20 Actors by Movie Rating
+├── output                   <- All generated figures in the blog
+│   ├── figure_1            
+│   ├── figure_2                 
+│   ├── figure_3             
+│   ├── figure_4             
+│   ├── figure_5              
+│   ├── figure_6             
+│   ├── figure_7                       
+│   └── figure_8             
 │ 
 └── src                      <- Source code for the project
     ├── scraper.py           <- Script to scrape movie metadata from JustWatch
@@ -69,6 +70,23 @@ As a result:
     └── analysis.py          <- Script to run analysis and generate figures   
 ```
 ---
+
+## Outputs
+
+These outputs are stored in `output` folder. A decription of them is down below:
+
+| Chart | File | Description |
+|---|---|---|
+| 1 | `figure_1` | Highest Rated Genres |
+| 2 | `figure_2` | IMDb Rating vs Duration  |
+| 3 | `figure_3` | Average Movie Duration by Genre |
+| 4 | `figure_4` | Genre Common with Animation  |
+| 5 | `figure_5` | Top-Rated Directors |
+| 6 | `figure_6` | Top 10 Director-Actor Collaboration |
+| 7 | `figure_7` | Top 20 Most Frequent Actors  |
+| 8 | `figure_8` | Top 20 Actors by Movie Rating |
+
+This is the order the chart are shown in the blog.
 
 ## Requirements
 
