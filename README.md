@@ -1,4 +1,6 @@
 # 📘 Data‑Driven Blog Post: IMDb Movie Analysis
+
+*HackMD Page Link:* **[What Makes a Movie Great](https://hackmd.io/@l6Vo-ZhfQLGdtpdRTjfjBA/SJGemNitWg/)**
 ---
 ## Table of Contents
 1. [Overview](#overview)
